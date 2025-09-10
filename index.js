@@ -10,19 +10,26 @@ dotenv.config(); // load env variables first
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// ✅ Middleware
+app.use(
+  cors({
+    origin: "*", // allow all origins
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.options("*", cors()); // handle preflight requests
 app.use(express.json());
 
-// Routes
+// ✅ Routes
 app.use("/book", bookRoute);
 app.use("/user", userRoute);
 
-// Environment variables
+// ✅ Environment variables
 const PORT = process.env.PORT || 4000;
 const URI = process.env.MONGO_URI;
 
-// Connect to MongoDB asynchronously
+// ✅ Connect to MongoDB asynchronously
 const connectDB = async () => {
   try {
     await mongoose.connect(URI, {
@@ -36,7 +43,7 @@ const connectDB = async () => {
   }
 };
 
-// Start server only after DB connection
+// ✅ Start server only after DB connection
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
